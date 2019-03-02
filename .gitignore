@@ -3,3 +3,6 @@
 *.info
 metadata/*
 Library/*
+*.backup
+*.bakert
+Temp/UnityLockfile
