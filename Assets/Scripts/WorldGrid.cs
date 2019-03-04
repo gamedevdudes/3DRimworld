@@ -5,7 +5,7 @@ using UnityEngine;
 public class WorldGrid : MonoBehaviour
 {
     private BuildTile[,,] tiles = new BuildTile[width,height,LEVELS];
-    public const int width=100, height = 100;
+    public const int width=200, height = 200;
     private const int LEVELS = 10;
     //public BuildTile BuildTile;
     public GameObject Floor;
@@ -74,7 +74,7 @@ public class WorldGrid : MonoBehaviour
                 int z = (int) roundedValue;
                 if(z == LEVELS) z = LEVELS -1;
                 if(x == 4 || y == 4) {
-                    print("sample: " + sample + " i: "+ i + " j: "+ j + " seed: " + seed);
+                    //print("sample: " + sample + " i: "+ i + " j: "+ j + " seed: " + seed);
                 }
                 //print("x:" + x + " y: " + y + "," + z);
                 if(x + width/2 < width  && y+height/2 < height && z +LEVELS/2 < LEVELS) {
