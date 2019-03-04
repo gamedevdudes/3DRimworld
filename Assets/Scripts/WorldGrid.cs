@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WorldGrid : MonoBehaviour
 {
-    private List<BuildTile> tiles;
+    private Dictionary<Vector3, BuildTile> tiles;
     //public BuildTile BuildTile;
     public GameObject Floor;
     public GameObject Wall;
@@ -55,6 +55,7 @@ public class WorldGrid : MonoBehaviour
         buildTile.setPosition(x,y);
         buildTile.SetWall(tilePosition, objectToBeAdded);
         objectToBeAdded.transform.SetParent(buildTileContainer.transform);
+        tiles.Add(position, buildTile);
 
     }
     public void addToGrid(GameObject transform, int x, int y) {
@@ -66,6 +67,7 @@ public class WorldGrid : MonoBehaviour
         buildTile.setPosition(x,y);
         buildTile.SetFloor(objectToBeAdded);
         objectToBeAdded.transform.SetParent(buildTileContainer.transform);
+        tiles.Add(position, buildTile);
 
     }
 

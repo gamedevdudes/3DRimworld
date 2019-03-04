@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BuildTile : MonoBehaviour
 {
+
+    /// Sollte Standardmäßig der Block sein auf dem Gebaut wird außer es wird in einem neuen Stockwerk gebaut, dann muss das Dach vom darunter liegenden Block genutzt werden.
     private GameObject floor;
 
     private GameObject ceiling;
