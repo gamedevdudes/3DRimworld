@@ -33,7 +33,7 @@ public class CameraController : MonoBehaviour
             camera.transform.transform.localPosition+=(new Vector3(0.1f,0,0));
         }
         if(Input.GetAxis("Mouse ScrollWheel") <0f) {
-            if(currentHeight < 10) {
+            if(currentHeight < 45) {
                 currentHeight++;
             float x = camera.transform.position.x;
             float z = camera.transform.position.z;

@@ -37,6 +37,9 @@ public class BuildTile
 
         }
     }
+    public GameObject getFloor() {
+        return floor;
+    }
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
