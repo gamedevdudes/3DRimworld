@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildItem : MonoBehaviour
+public class RessourceBlock : MonoBehaviour
 {
-
-
-    
     // Start is called before the first frame update
     void Start()
     {
-        enabled = false;    
+        
     }
 
     // Update is called once per frame

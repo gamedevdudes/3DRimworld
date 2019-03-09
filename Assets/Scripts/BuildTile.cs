@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildTile : MonoBehaviour
+public class BuildTile
 {
+
+    /// Sollte Standardmäßig der Block sein auf dem Gebaut wird außer es wird in einem neuen Stockwerk gebaut, dann muss das Dach vom darunter liegenden Block genutzt werden.
     private GameObject floor;
 
     private GameObject ceiling;
@@ -35,18 +37,13 @@ public class BuildTile : MonoBehaviour
 
         }
     }
+    public GameObject getFloor() {
+        return floor;
+    }
     public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
     }
     // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }
