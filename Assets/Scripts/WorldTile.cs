@@ -14,7 +14,12 @@ public class WorldTile : MonoBehaviour
     public MeshRenderer GetMeshRenderer() {
         return this.GetComponent<MeshRenderer>();
     }
-
+    public int x,y,z;
+    public void setCoords(int x, int y , int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
     // Start is called before the first frame update
     void Start()
     {
