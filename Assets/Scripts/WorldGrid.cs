@@ -10,13 +10,14 @@ public class WorldGrid : MonoBehaviour
 
     private WorldTile[,,] worldTiles = new WorldTile[width, height, levels];
     [SerializeField]
-    public static int width = 50, height = 50, levels = 20;
+    public static int width = 300, height = 300, levels = 20;
 
     public Slider slider;
 
     //public BuildTile BuildTile;
     public GameObject Floor;
     public GameObject worldTile;
+    public GameObject WaterTile;
     public GameObject Wall;
     public GameObject TableLike;
     public GameObject GroundWorldTile;
@@ -104,7 +105,7 @@ public class WorldGrid : MonoBehaviour
                         else
                         {
                             //Ist Rechts einer höher
-                            if (worldTiles[i + 1, j, k + 1] != null && worldTiles[i - 1, j, k] != null)
+                            if (worldTiles[i + 1, j, k + 1] != null && worldTiles[i - 1, j, k] != null && worldTiles[i+1,j, k+1].gameObject.tag != "Diagonal")
                             {
                                 //GameObject.Destroy(tile.GetComponent<WorldTile>());
                                 //GameObject.DestroyImmediate(tile);
@@ -124,7 +125,7 @@ public class WorldGrid : MonoBehaviour
                                 else
                                 {
                                     //Ist vorne höher
-                                    if (worldTiles[i - 1, j, k + 1] != null  && worldTiles[i + 1, j, k ] != null)
+                                    if (worldTiles[i - 1, j, k + 1] != null  && worldTiles[i + 1, j, k ] != null && worldTiles[i-1,j, k+1].gameObject.tag != "Diagonal")
                                     {
                                         //RICHTIG
                                         //GameObject.Destroy(tile.GetComponent<WorldTile>());
@@ -135,7 +136,7 @@ public class WorldGrid : MonoBehaviour
                                     else
                                     {
                                         //Ist rechts höher
-                                        if (worldTiles[i, j + 1, k + 1] != null  && worldTiles[i , j-1, k ] != null)
+                                        if (worldTiles[i, j + 1, k + 1] != null  && worldTiles[i , j-1, k ] != null && worldTiles[i,j+1, k+1].gameObject.tag != "Diagonal")
                                         {
                                             //GameObject.Destroy(tile.GetComponent<WorldTile>());
                                             //GameObject.DestroyImmediate(tile);
@@ -200,12 +201,14 @@ public class WorldGrid : MonoBehaviour
                 if (x < width && y < height && z + levels / 2 < levels)
                 {
                     //addToGrid(Floor, x, y,z);
-                    if (z < 0.3f * levels)
+                    if (z < -levels/2 + 2)
                     {
-                        addToTiles(GroundWorldTile, x, y, z, translation, rotation);
+                        addToTiles(WaterTile, x, y, z, translation, rotation);
 
                     }
-                    else
+                    else if(z<0.7f * levels - levels/2) {
+                        addToTiles(GroundWorldTile,x,y,z,translation,rotation);
+                    } else 
                     {
                         addToTiles(Floor, x, y, z, translation, rotation);
 
