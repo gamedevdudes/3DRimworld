@@ -10,7 +10,7 @@ public class WorldGrid : MonoBehaviour
 
     private WorldTile[,,] worldTiles = new WorldTile[width, height, levels];
     [SerializeField]
-    public static int width = 300, height = 300, levels = 20;
+    public static int width = 50, height = 50, levels = 20;
 
     public Slider slider;
 
@@ -44,8 +44,15 @@ public class WorldGrid : MonoBehaviour
         // tiles.Initialize();
 
     }
+    public void generateWorldWithoutRandomSeed()
+    {
+        worldGeneration = generatePerlinWorld(0);
+        StartCoroutine(worldGeneration);
+        flattening = flattenLandscape();
+        //generatePerlinWorld(randomseed);
+    }
     public void generateWorldWithRandomSeed()
-    {        
+    {
         float randomseed = UnityEngine.Random.Range(0, 100000);
         print("seed: " + randomseed);
         worldGeneration = generatePerlinWorld(randomseed);
@@ -53,7 +60,8 @@ public class WorldGrid : MonoBehaviour
         flattening = flattenLandscape();
         //generatePerlinWorld(randomseed);
     }
-    private void finishGeneration() {
+    private void finishGeneration()
+    {
         StaticBatchingUtility.Combine(WorldContainer);
         GameObject.Destroy(slider.gameObject);
     }
@@ -76,62 +84,73 @@ public class WorldGrid : MonoBehaviour
 
     IEnumerator flattenLandscape()
     {
-        slider.maxValue = width-1;
+        slider.maxValue = levels;
         slider.value = 0;
-        for (int i = 1; i < width - 1; i++)
+        for (int k = 0; k < levels - 1; k++)
+
         {
             for (int j = 1; j < height - 1; j++)
             {
-                for (int k = 0; k < levels - 1; k++)
+                for (int i = 1; i < width - 1; i++)
+
                 {
                     WorldTile tile = worldTiles[i, j, k];
                     if (tile != null)
-                    {   
-                        if (worldTiles[i + 1, j, k] != null && worldTiles[i - 1, j, k] != null && worldTiles[i , j+1, k] != null&& worldTiles[i , j-1, k] != null ) {
+                    {
+                        if (worldTiles[i + 1, j, k] != null && worldTiles[i - 1, j, k] != null && worldTiles[i, j + 1, k] != null && worldTiles[i, j - 1, k] != null)
+                        {
                             tile.GetComponent<MeshRenderer>().shadowCastingMode = 0;
-                        } else 
-
-                        //Ist Rechts einer höher
-                        if (worldTiles[i + 1, j, k + 1] != null)
-                        {
-                            GameObject.Destroy(tile.GetComponent<WorldTile>());
-                            //GameObject.DestroyImmediate(tile);
-                            GameObject.Destroy(tile.gameObject);
-                            addToTiles(DiagonalWorldTile, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 270, 0));
                         }
                         else
-                        //Check ob hinten höher
-                        if (worldTiles[i, j + 1, k + 1] != null)
                         {
-                            GameObject.Destroy(tile.GetComponent<WorldTile>());
-                            //GameObject.DestroyImmediate(tile);
-                            GameObject.Destroy(tile.gameObject);
-                            addToTiles(DiagonalWorldTile, i, j, k + 2 - levels / 2, Vector3.zero,Quaternion.Euler(0, 180, 0));
+                            //Ist Rechts einer höher
+                            if (worldTiles[i + 1, j, k + 1] != null && worldTiles[i - 1, j, k] != null)
+                            {
+                                //GameObject.Destroy(tile.GetComponent<WorldTile>());
+                                //GameObject.DestroyImmediate(tile);
+                                //GameObject.Destroy(tile.gameObject);
+                                addToTiles(DiagonalWorldTile, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 270, 0), "Orientation i+1");
+                            }
+                            else
+                            {
+                                //Check ob hinten höher
+                                if (worldTiles[i, j - 1, k + 1] != null  && worldTiles[i , j+1, k] != null && worldTiles[i,j-1, k+1].gameObject.tag != "Diagonal")
+                                {
+                                    //GameObject.Destroy(tile.GetComponent<WorldTile>());
+                                    //GameObject.DestroyImmediate(tile);
+                                    //GameObject.Destroy(tile.gameObject);
+                                    addToTiles(DiagonalWorldTile, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 0, 0), "Orientation j-1");
+                                }
+                                else
+                                {
+                                    //Ist vorne höher
+                                    if (worldTiles[i - 1, j, k + 1] != null  && worldTiles[i + 1, j, k ] != null)
+                                    {
+                                        //RICHTIG
+                                        //GameObject.Destroy(tile.GetComponent<WorldTile>());
+                                        //GameObject.DestroyImmediate(tile);
+                                        //GameObject.Destroy(tile.gameObject);
+                                        addToTiles(DiagonalWorldTile, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 90, 0), "Orientation i-1");
+                                    }
+                                    else
+                                    {
+                                        //Ist rechts höher
+                                        if (worldTiles[i, j + 1, k + 1] != null  && worldTiles[i , j-1, k ] != null)
+                                        {
+                                            //GameObject.Destroy(tile.GetComponent<WorldTile>());
+                                            //GameObject.DestroyImmediate(tile);
+                                            //GameObject.Destroy(tile.gameObject);
+                                            addToTiles(DiagonalWorldTile, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 180, 0), "Orientation j+1");
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        else
-                        //Ist vorne höher
-                        if (worldTiles[i, j - 1, k + 1] != null)
-                        {
-                            GameObject.Destroy(tile.GetComponent<WorldTile>());
-                            //GameObject.DestroyImmediate(tile);
-                            GameObject.Destroy(tile.gameObject);
-                            addToTiles(DiagonalWorldTile, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 0, 0));
-                        }
-                        else
-                     //Ist rechts höher
-                     if (worldTiles[i - 1, j, k + 1] != null)
-                        {
-                            GameObject.Destroy(tile.GetComponent<WorldTile>());
-                            //GameObject.DestroyImmediate(tile);
-                            GameObject.Destroy(tile.gameObject);
-                            addToTiles(DiagonalWorldTile, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 90, 0));
-                        }
-
 
                     }
                 }
             }
-            slider.value = i;
+            slider.value = k;
             yield return null;
         }
         print("Flattening done");
@@ -181,10 +200,13 @@ public class WorldGrid : MonoBehaviour
                 if (x < width && y < height && z + levels / 2 < levels)
                 {
                     //addToGrid(Floor, x, y,z);
-                    if(z< 0.3f * levels) {
+                    if (z < 0.3f * levels)
+                    {
                         addToTiles(GroundWorldTile, x, y, z, translation, rotation);
 
-                    } else {
+                    }
+                    else
+                    {
                         addToTiles(Floor, x, y, z, translation, rotation);
 
                     }
@@ -197,16 +219,38 @@ public class WorldGrid : MonoBehaviour
         }
         StartCoroutine(flattening);
         print("Generating done");
-        }
+    }
     public void addToTiles(GameObject tileObject, int x, int y, int z, Vector3 translate, Quaternion rotate)
     {
         Vector3 position = new Vector3(x, z, y);
         Quaternion rotation = rotate;
         GameObject objectToBeAdded = (Instantiate(tileObject, position + translate, rotate));
-        objectToBeAdded.name = tileObject.name + "WorldTile at " + x + y + z;
+        objectToBeAdded.name = tileObject.name + "WorldTile at " + x + "," + y + "," + z;
         try
         {
-            worldTiles[x, y, z + levels / 2 - 1] = objectToBeAdded.GetComponent<WorldTile>();
+            WorldTile tile = objectToBeAdded.GetComponent<WorldTile>();
+            worldTiles[x, y, z + (levels / 2) - 1] = tile;
+            tile.setCoords(x,y,z + (levels /2) -1);
+
+        }
+        catch (IndexOutOfRangeException e)
+        {
+            print("Exception at:" + x + ", " + y + ", " + z);
+        }
+        objectToBeAdded.transform.SetParent(WorldContainer.transform);
+    }
+    public void addToTiles(GameObject tileObject, int x, int y, int z, Vector3 translate, Quaternion rotate, string orientation)
+    {
+        Vector3 position = new Vector3(x, z, y);
+        Quaternion rotation = rotate;
+        GameObject objectToBeAdded = (Instantiate(tileObject, position + translate, rotate));
+        objectToBeAdded.name = tileObject.name + "WorldTile at " + x + "," + y + "," + z;
+        try
+        {
+            WorldTile tile = objectToBeAdded.GetComponent<WorldTile>();
+            worldTiles[x, y, z + (levels / 2) - 1] = tile;
+            tile.Orientation = orientation;
+
         }
         catch (IndexOutOfRangeException e)
         {
@@ -257,17 +301,17 @@ public class WorldGrid : MonoBehaviour
         // addBuildTile(buildTile, (int) position.x, (int) position.y, (int) position.z);
 
     }
-    public void addToGrid(GameObject transform, int x, int y, int z)
-    {
-        Vector3 position = new Vector3(x, z, y);
-        GameObject objectToBeAdded = (Instantiate(transform, position, Quaternion.identity));
-        objectToBeAdded.name = "Floor at " + x + "," + y + "," + z;
-        BuildTile buildTile = new BuildTile();
-        buildTile.setPosition(x, y);
-        buildTile.SetFloor(objectToBeAdded);
-        //objectToBeAdded.transform.SetParent(this.transform);
-        addBuildTile(buildTile, (int)position.x, (int)position.y, (int)position.z);
-    }
+    // public void addToGrid(GameObject transform, int x, int y, int z)
+    // {
+    //     Vector3 position = new Vector3(x, z, y);
+    //     GameObject objectToBeAdded = (Instantiate(transform, position, Quaternion.identity));
+    //     objectToBeAdded.name = "Floor at " + x + "," + y + "," + z;
+    //     BuildTile buildTile = new BuildTile();
+    //     buildTile.setPosition(x, y);
+    //     buildTile.SetFloor(objectToBeAdded);
+    //     //objectToBeAdded.transform.SetParent(this.transform);
+    //     addBuildTile(buildTile, (int)position.x, (int)position.y, (int)position.z);
+    // }
     private BuildTile getBuildTile(int x, int y, int z)
     {
         int xCoord = x + width / 2;
@@ -285,6 +329,15 @@ public class WorldGrid : MonoBehaviour
         //print("Größe: " + tiles.GetLength(0) + "," + tiles.GetLength(1) + "," + tiles.GetLength(2));
         //TODO UMBEDINGT ÜBERSCHREIBEN VERHINDERN
         tiles[xCoord, yCoord, zCoord] = tile;
+    }
+    public WorldTile[,,] GetTiles()
+    {
+        return worldTiles;
+    }
+
+    public BuildTile[,,] GetBuildTiles()
+    {
+        return tiles;
     }
 }
 public enum TilePosition

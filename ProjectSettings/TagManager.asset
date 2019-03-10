@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Occluder Static
   - Occludee Static
+  - Diagonal
   layers:
   - Default
   - TransparentFX

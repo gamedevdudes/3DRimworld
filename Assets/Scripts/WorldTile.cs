@@ -8,6 +8,7 @@ public class WorldTile : MonoBehaviour
 
 {
 
+    public string Orientation= "";
     public MeshFilter GetMeshFilter() {
         return this.GetComponent<MeshFilter>();
     }
@@ -19,6 +20,9 @@ public class WorldTile : MonoBehaviour
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+    public Vector3 getCoords() {
+        return new Vector3(x,y,z);
     }
     // Start is called before the first frame update
     void Start()

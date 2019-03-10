@@ -200,6 +200,54 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 27.099976}
   m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &266473056
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 266473058}
+  - component: {fileID: 266473057}
+  m_Layer: 0
+  m_Name: BuildSystemController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &266473057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266473056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dafd4a4dc45dd2429f9b0d2acc28d74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  worldGrid: {fileID: 1361330530}
+  Floor: {fileID: 6459207545634495768, guid: f27539a5f7cb4b74883f29fd9e73c737, type: 3}
+  EmptyTile: {fileID: 300555983239318306, guid: ad8e794699dd15948b0c83837055fe72,
+    type: 3}
+  camera: {fileID: 1297650283}
+--- !u!4 &266473058
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 266473056}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 72.274536, y: -25.300522, z: 31.488907}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &411502247
 GameObject:
   m_ObjectHideFlags: 0
@@ -483,8 +531,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1361330530}
-        m_MethodName: generatePerlinWorld
-        m_Mode: 4
+        m_MethodName: generateWorldWithoutRandomSeed
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -544,7 +592,7 @@ GameObject:
   - component: {fileID: 824177815}
   - component: {fileID: 824177814}
   m_Layer: 5
-  m_Name: Text
+  m_Name: rotating
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -602,7 +650,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: AddWalls
+  m_Text: SunRotate
 --- !u!222 &824177815
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1520,7 +1568,7 @@ GameObject:
   - component: {fileID: 1646170570}
   - component: {fileID: 1646170569}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: SunRotation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1586,8 +1634,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1361330530}
-        m_MethodName: addWallsToGrid
+      - m_Target: {fileID: 2035111238}
+        m_MethodName: setRotating
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1595,6 +1643,17 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 824177814}
+        m_MethodName: set_text
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: StopRotating
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -1790,6 +1849,7 @@ GameObject:
   - component: {fileID: 2035111234}
   - component: {fileID: 2035111237}
   - component: {fileID: 2035111236}
+  - component: {fileID: 2035111238}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -1947,6 +2007,18 @@ MonoBehaviour:
   blockerSampleCount: 24
   filterSampleCount: 32
   minFilterSize: 0.00001
+--- !u!114 &2035111238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2035111233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 271ac8694d41eb9448ad1e4eecf7d7c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2058212610
 GameObject:
   m_ObjectHideFlags: 0
@@ -2122,7 +2194,7 @@ PrefabInstance:
     - target: {fileID: 7977463386683653874, guid: 2ce6ee723fb7fc44a86f0178a7825f7b,
         type: 3}
       propertyPath: factor
-      value: 15
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 4031178982247165397, guid: 2ce6ee723fb7fc44a86f0178a7825f7b,
         type: 3}

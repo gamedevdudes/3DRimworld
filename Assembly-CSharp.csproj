@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\BuildItem.cs" />
+     <Compile Include="Assets\Scripts\BuildSystem.cs" />
      <Compile Include="Assets\Scripts\BuildTile.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\LandscapeBlock.cs" />
