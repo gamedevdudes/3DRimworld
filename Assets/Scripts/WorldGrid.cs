@@ -2,21 +2,30 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WorldGrid : MonoBehaviour
 {
     public BuildTile[,,] tiles = new BuildTile[width, height, levels];
 
     private WorldTile[,,] worldTiles = new WorldTile[width, height, levels];
-    public const int width = 300, height = 300, levels = 20;
+    [SerializeField]
+    public static int width = 300, height = 300, levels = 20;
+
+    public Slider slider;
 
     //public BuildTile BuildTile;
     public GameObject Floor;
     public GameObject worldTile;
     public GameObject Wall;
     public GameObject TableLike;
+    public GameObject GroundWorldTile;
     public GameObject DiagonalWorldTile;
     public GameObject WorldContainer;
+    public int factor;
+    private IEnumerator worldGeneration;
+    private IEnumerator flattening;
+    private IEnumerator destroySlider;
 
     // Start is called before the first frame update
     void Start()
@@ -39,9 +48,14 @@ public class WorldGrid : MonoBehaviour
     {        
         float randomseed = UnityEngine.Random.Range(0, 100000);
         print("seed: " + randomseed);
-        generatePerlinWorld(randomseed);
+        worldGeneration = generatePerlinWorld(randomseed);
+        StartCoroutine(worldGeneration);
+        flattening = flattenLandscape();
+        //generatePerlinWorld(randomseed);
+    }
+    private void finishGeneration() {
         StaticBatchingUtility.Combine(WorldContainer);
-
+        GameObject.Destroy(slider.gameObject);
     }
     // Update is called once per frame
     void Update()
@@ -60,8 +74,10 @@ public class WorldGrid : MonoBehaviour
         }
     }
 
-    public void flattenLandscape()
+    IEnumerator flattenLandscape()
     {
+        slider.maxValue = width-1;
+        slider.value = 0;
         for (int i = 1; i < width - 1; i++)
         {
             for (int j = 1; j < height - 1; j++)
@@ -70,7 +86,11 @@ public class WorldGrid : MonoBehaviour
                 {
                     WorldTile tile = worldTiles[i, j, k];
                     if (tile != null)
-                    {
+                    {   
+                        if (worldTiles[i + 1, j, k] != null && worldTiles[i - 1, j, k] != null && worldTiles[i , j+1, k] != null&& worldTiles[i , j-1, k] != null ) {
+                            tile.GetComponent<MeshRenderer>().shadowCastingMode = 0;
+                        } else 
+
                         //Ist Rechts einer höher
                         if (worldTiles[i + 1, j, k + 1] != null)
                         {
@@ -111,7 +131,12 @@ public class WorldGrid : MonoBehaviour
                     }
                 }
             }
+            slider.value = i;
+            yield return null;
         }
+        print("Flattening done");
+        finishGeneration();
+
     }
     /*
     NUR TEST METHODEN
@@ -125,20 +150,20 @@ public class WorldGrid : MonoBehaviour
         addToGrid(Wall, 0, 1, TilePosition.Front);
 
     }
-    private int roundAndFlatHeight(float value)
+    private static int roundAndFlatHeight(float value)
     {
         float mappedValue = value * levels - levels / 2;
         float roundedValue = Mathf.Round(mappedValue);
         return (int)roundedValue;
 
     }
-    private float calcCoord(int value, float seed)
+    private static float calcCoord(int value, float seed)
     {
         return value / 1000.0f + seed;
     }
-    public void generatePerlinWorld(float seed)
+    IEnumerator generatePerlinWorld(float seed)
     {
-        int factor = 15;
+        slider.maxValue = width * factor;
         for (int i = 0; i < width * factor; i += 1 * factor)
         {
             for (int j = 0; j < height * factor; j += 1 * factor)
@@ -153,17 +178,26 @@ public class WorldGrid : MonoBehaviour
                 int z = roundAndFlatHeight(sample);
                 if (z == levels) z = levels - 1;
                 //print("x:" + x + " y: " + y + "," + z);
-                if (x + width / 2 < width && y + height / 2 < height && z + levels / 2 < levels)
+                if (x < width && y < height && z + levels / 2 < levels)
                 {
                     //addToGrid(Floor, x, y,z);
+                    if(z< 0.3f * levels) {
+                        addToTiles(GroundWorldTile, x, y, z, translation, rotation);
 
-                    addToTiles(Floor, x, y, z, translation, rotation);
+                    } else {
+                        addToTiles(Floor, x, y, z, translation, rotation);
+
+                    }
                 }
-            }
-        }
+                slider.value = i;
 
-        flattenLandscape();
-    }
+            }
+            yield return null;
+
+        }
+        StartCoroutine(flattening);
+        print("Generating done");
+        }
     public void addToTiles(GameObject tileObject, int x, int y, int z, Vector3 translate, Quaternion rotate)
     {
         Vector3 position = new Vector3(x, z, y);
@@ -252,7 +286,6 @@ public class WorldGrid : MonoBehaviour
         //TODO UMBEDINGT ÜBERSCHREIBEN VERHINDERN
         tiles[xCoord, yCoord, zCoord] = tile;
     }
-
 }
 public enum TilePosition
 {
