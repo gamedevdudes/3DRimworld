@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.AI;
 public class BuildSystem : MonoBehaviour
 {
 
     public WorldGrid worldGrid;
     public BuildItem Floor;
+    public GameObject agentModel;
+    private NavMeshAgent agent;
     public BuildTile EmptyTile;
     public Camera camera;
     public void BuildItem(BuildItem item) {
@@ -29,7 +31,32 @@ public class BuildSystem : MonoBehaviour
     void Start()
     {
     }
+    public void BuildAgent() {
+        RaycastHit hit;
+        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+        
+        if (Physics.Raycast(ray, out hit)) {
+            Transform objectHit = hit.transform;
+            GameObject gameObject = objectHit.gameObject;
+            var agentObject = GameObject.Instantiate(agentModel,gameObject.transform.position + new Vector3(0,0.5f,0), Quaternion.identity);
+            agent = agentObject.GetComponent<NavMeshAgent>();
 
+        }
+
+    }
+    public void SetOnTrail() {
+        RaycastHit hit;
+        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+        
+        if (Physics.Raycast(ray, out hit)) {
+            Transform objectHit = hit.transform;
+            GameObject gameObject = objectHit.gameObject;
+            if(agent != null) {
+                agent.SetDestination(gameObject.transform.position);
+            }
+        }
+
+    }
     // Update is called once per frame
     void Update()
     {
@@ -37,5 +64,15 @@ public class BuildSystem : MonoBehaviour
             print("Trying to Build");
             BuildItem(Floor);
         }
+        if(Input.GetKeyDown(KeyCode.T))
+         {
+             print("Spawning Agent");
+            BuildAgent();
+         }
+         if(Input.GetKeyDown(KeyCode.G)) {
+             print("Target chosen");
+                SetOnTrail();
+         }  
+
     }
 }
