@@ -17,7 +17,7 @@ public class BuildSystem : MonoBehaviour
             Transform objectHit = hit.transform;
             GameObject gameObject = objectHit.gameObject;
             WorldTile tile = gameObject.GetComponent<WorldTile>();
-            Vector3 position = new Vector3(tile.getCoords().x, tile.getCoords().z - WorldGrid.levels/2+1.51f, tile.getCoords().y);
+            Vector3 position = new Vector3(tile.getCoords().x, tile.getCoords().z - worldGrid.levels/2+1.51f, tile.getCoords().y);
             BuildTile buildTile = Instantiate(EmptyTile,position, Quaternion.Euler(0,0,0));
             buildTile.gameObject.name = "BuiltTile at: " + tile.getCoords().ToString();
             BuildItem floor = Instantiate(Floor, position, Quaternion.Euler(0,0,0));

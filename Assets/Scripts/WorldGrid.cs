@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class WorldGrid : MonoBehaviour
 {
-    public BuildTile[,,] tiles = new BuildTile[width, height, levels];
+    public BuildTile[,,] tiles;
 
-    private WorldTile[,,] worldTiles = new WorldTile[width, height, levels];
+    private WorldTile[,,] worldTiles;
     [SerializeField]
-    public static int width = 300, height = 300, levels = 20;
-
+    public int width = 150, height = 150, levels = 20;
     public Slider slider;
 
     //public BuildTile BuildTile;
@@ -23,6 +23,8 @@ public class WorldGrid : MonoBehaviour
     public GameObject GroundWorldTile;
     public GameObject DiagonalWorldTile;
     public GameObject WorldContainer;
+
+    public LocalNavMeshBuilder navMeshBuilder;
     public int factor;
     private IEnumerator worldGeneration;
     private IEnumerator flattening;
@@ -31,6 +33,8 @@ public class WorldGrid : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        tiles = new BuildTile[width, height, levels];
+        worldTiles = new WorldTile[width, height, levels];
         tiles.Initialize();
         worldTiles.Initialize();
         this.WorldContainer = GameObject.Find("WorldContainer");
@@ -65,6 +69,7 @@ public class WorldGrid : MonoBehaviour
     {
         StaticBatchingUtility.Combine(WorldContainer);
         GameObject.Destroy(slider.gameObject);
+        navMeshBuilder.stillUpdating = false;
     }
     // Update is called once per frame
     void Update()
@@ -82,7 +87,7 @@ public class WorldGrid : MonoBehaviour
             }
         }
     }
-
+   
     IEnumerator flattenLandscape()
     {
         slider.maxValue = levels;
@@ -170,7 +175,7 @@ public class WorldGrid : MonoBehaviour
         addToGrid(Wall, 0, 1, TilePosition.Front);
 
     }
-    private static int roundAndFlatHeight(float value)
+    private int roundAndFlatHeight(float value)
     {
         float mappedValue = value * levels - levels / 2;
         float roundedValue = Mathf.Round(mappedValue);
