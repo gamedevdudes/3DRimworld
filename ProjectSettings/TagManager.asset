@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Occluder Static
+  - Occludee Static
+  - Diagonal
+  - DiagonalCorner
   layers:
   - Default
   - TransparentFX

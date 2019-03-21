@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4031178982247165397}
   - component: {fileID: 4031178982247165392}
-  - component: {fileID: 7977463386683653874}
+  - component: {fileID: 318290209167340408}
   m_Layer: 0
   m_Name: WorldGrid
   m_TagString: Untagged
@@ -46,7 +46,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 14
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &7977463386683653874
+--- !u!114 &318290209167340408
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -55,11 +55,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 4031178982247165393}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d17c6e2b5382b54697c2274e7f2c1c8, type: 3}
+  m_Script: {fileID: 11500000, guid: 58076dd6044914b4f87db3bed0e76b61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Floor: {fileID: 7351412962368822804, guid: 9fad025862a506b44860f47000a3b759, type: 3}
+  width: 150
+  height: 150
+  levels: 20
+  slider: {fileID: 0}
+  Floor: {fileID: 6459207545634495769, guid: f27539a5f7cb4b74883f29fd9e73c737, type: 3}
   worldTile: {fileID: 7351412962368822804, guid: 9fad025862a506b44860f47000a3b759,
+    type: 3}
+  WaterTile: {fileID: 2579098027851560438, guid: 9c4355d6dd9fecd4896b5e831e75a27c,
+    type: 3}
+  GrassObject: {fileID: 6960653670946640451, guid: 32642a4a068853c4e99b01dbe2acc1e5,
     type: 3}
   Wall: {fileID: 3632918368366729937, guid: 91f92510342063144b556b0d31a841cc, type: 3}
   TableLike: {fileID: 0}
+  GroundWorldTile: {fileID: 8587002967902325720, guid: 562051b08f7799f4c923059edab06c44,
+    type: 3}
+  DiagonalWorldTile: {fileID: 6365474777778952796, guid: a1e9421b4df0e5b4ca3547d43786904d,
+    type: 3}
+  WorldContainer: {fileID: 0}
+  CornerCube: {fileID: 100000, guid: 69b3b764d6f2d0647bad2661258f4f4e, type: 3}
+  navMeshBuilder: {fileID: 0}
+  factor: 0
