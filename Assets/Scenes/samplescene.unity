@@ -1739,8 +1739,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 318290209167340408, guid: 2ce6ee723fb7fc44a86f0178a7825f7b,
-          type: 3}
+      - m_Target: {fileID: 2078223789}
         m_MethodName: setLevels
         m_Mode: 0
         m_Arguments:
@@ -2879,8 +2878,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2124695787}
-        m_MethodName: DetachChildren
+      - m_Target: {fileID: 2078223789}
+        m_MethodName: clearChildren
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3750,8 +3749,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 318290209167340408, guid: 2ce6ee723fb7fc44a86f0178a7825f7b,
-          type: 3}
+      - m_Target: {fileID: 2078223789}
         m_MethodName: setHeight
         m_Mode: 0
         m_Arguments:
