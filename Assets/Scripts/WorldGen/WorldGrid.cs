@@ -58,12 +58,23 @@ namespace WorldGen
             // tiles.Initialize();
 
         }
+        /// <summary> 
+        /// Starts the coroutine for generating a world with the seed 0. This will also call <see cref="flattenLandscape"/>
+        /// <summary/>
         public void generateWorldWithoutRandomSeed()
         {
             worldGeneration = generatePerlinWorld(0);
             StartCoroutine(worldGeneration);
             //generatePerlinWorld(randomseed);
         }
+        /// <summary> 
+        /// Starts the coroutine for generatig a world with a random seed. For this you need to have set the  <see cref="width"/>, the <see cref="height"/> (depth), the <see cref="factor"/> and the <see cref="levels"/>.
+        /// The factor sets the amount of height differences that occur.
+        /// Levels sets the maximum difference between lowest and highest height.
+        /// Height sets the amount of block in the z axis
+        /// Width sets the amount of blocks in the x axis
+        /// This will also call <see cref="flattenLandscape"/>
+        /// <summary/>
         public void generateWorldWithRandomSeed()
         {
             slider.gameObject.SetActive(true);
@@ -74,6 +85,9 @@ namespace WorldGen
             flattening = flattenLandscape();
             //generatePerlinWorld(randomseed);
         }
+        /// <summary>
+        /// Finishes the world generation in disabling the visibility of the slider, stopping the navmesh generation and combining the generated mesh with the <see cref="StaticBatchingUtility"/>
+        /// <summary/>
         private void finishGeneration()
         {
             if(grass) {
@@ -119,6 +133,9 @@ namespace WorldGen
                 }
             }
         }
+        /// <summary>
+        /// Generates bunches of Grass Objects. Currently not used. Is toggled whe <see cref="grass"/> = true.
+        /// <summary/>
         IEnumerator addGrass()
         {
             for (int k = 0; k < levels - 1; k++)
@@ -156,6 +173,9 @@ namespace WorldGen
                 }
             }
         }
+        /// <summary>
+        /// Smoothens the landscape by adding diagonal Tiles to the world. To generate the Tiles it used <see cref="addDiagonalCorners"/> and <see cref="addFlattening"/>
+        /// <summary/>
         IEnumerator flattenLandscape()
         {
             slider.maxValue = levels;
@@ -214,7 +234,9 @@ namespace WorldGen
             finishGeneration();
 
         }
-
+        /// <summary>
+        /// Adds CornerStones to further smoothen edges. It determines if there already are Diagonal tiles nearby and adds a corner Stone if thats the case.
+        /// <summary/>
         private void addDiagonalCorners(int k, int j, int i)
         {
             //Rechts & Hinten
@@ -247,51 +269,56 @@ namespace WorldGen
 
             }
         }
-
-        private void addFlattening(int k, int j, int i)
+        /// <summary>
+        /// Adds smoothening DiagonalTiles to make the Landscape better. 
+        /// <summary/>
+        /// <param name="z"> The y coordinate <param/>
+        /// <param name="y"> The z coordinate <param/>
+        /// <param name="x"> The x coordinate <param/>
+        private void addFlattening(int z, int y, int x)
         {
             
-            if(!checkDoubleSided(k, j, i))
+            if(!checkDoubleSided(z, y, x))
             {
 
                 //Ist Rechts einer höher
-                if (worldTiles[i + 1, j, k + 1] != null && worldTiles[i - 1, j, k] != null && worldTiles[i + 1, j, k + 1].gameObject.tag != "Diagonal")
+                if (worldTiles[x + 1, y, z + 1] != null && worldTiles[x - 1, y, z] != null && worldTiles[x + 1, y, z + 1].gameObject.tag != "Diagonal")
                 {
                     //GameObject.Destroy(tile.GetComponent<WorldTile>());
                     //GameObject.DestroyImmediate(tile);
                     //GameObject.Destroy(tile.gameObject);
-                    addToTiles(DiagonalWorldTile, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 270, 0), "Orientation i+1");
+                    addToTiles(DiagonalWorldTile, x, y, z + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 270, 0), "Orientation i+1");
                 }
                 else
                 {
                     //Check ob hinten höher
-                    if (worldTiles[i, j - 1, k + 1] != null && worldTiles[i, j + 1, k] != null && worldTiles[i, j - 1, k + 1].gameObject.tag != "Diagonal")
+                    if (worldTiles[x, y - 1, z + 1] != null && worldTiles[x, y + 1, z] != null && worldTiles[x, y - 1, z + 1].gameObject.tag != "Diagonal")
                     {
                         //GameObject.Destroy(tile.GetComponent<WorldTile>());
                         //GameObject.DestroyImmediate(tile);
                         //GameObject.Destroy(tile.gameObject);
-                        addToTiles(DiagonalWorldTile, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 0, 0), "Orientation j-1");
+                        addToTiles(DiagonalWorldTile, x, y, z + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 0, 0), "Orientation j-1");
                     }
                     else
                     {
                         //Ist links höher
-                        if (worldTiles[i - 1, j, k + 1] != null && worldTiles[i + 1, j, k] != null && worldTiles[i - 1, j, k + 1].gameObject.tag != "Diagonal")
+                        if (worldTiles[x - 1, y, z + 1] != null && worldTiles[x + 1, y, z] != null && worldTiles[x - 1, y, z + 1].gameObject.tag != "Diagonal")
                         {
                             //RICHTIG
                             //GameObject.Destroy(tile.GetComponent<WorldTile>());
                             //GameObject.DestroyImmediate(tile);
                             //GameObject.Destroy(tile.gameObject);
-                            addToTiles(DiagonalWorldTile, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 90, 0), "Orientation i-1");
+                            addToTiles(DiagonalWorldTile, x, y, z + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 90, 0), "Orientation i-1");
                         }
                         else
                         {
                             //Ist vorne höher
-                            if (worldTiles[i, j + 1, k + 1] != null && worldTiles[i, j - 1, k] != null && worldTiles[i, j + 1, k + 1].gameObject.tag != "Diagonal")
+                            if (worldTiles[x, y + 1, z + 1] != null && worldTiles[x, y - 1, z] != null && worldTiles[x, y + 1, z + 1].gameObject.tag != "Diagonal")
                             {
                                 //GameObject.Destroy(tile.GetComponent<WorldTile>());
                                 //GameObject.DestroyImmediate(tile);
                                 //GameObject.Destroy(tile.gameObject);
-                                addToTiles(DiagonalWorldTile, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 180, 0), "Orientation j+1");
+                                addToTiles(DiagonalWorldTile, x, y, z + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 180, 0), "Orientation j+1");
                             }
                         }
                     }
