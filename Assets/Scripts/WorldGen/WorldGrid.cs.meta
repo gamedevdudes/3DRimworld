@@ -1,0 +1,28 @@
+fileFormatVersion: 2
+guid: 58076dd6044914b4f87db3bed0e76b61
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - slider: {instanceID: 0}
+  - Floor: {fileID: 6459207545634495769, guid: f27539a5f7cb4b74883f29fd9e73c737, type: 3}
+  - worldTile: {fileID: 7351412962368822804, guid: 9fad025862a506b44860f47000a3b759,
+      type: 3}
+  - WaterTile: {fileID: 2579098027851560438, guid: 9c4355d6dd9fecd4896b5e831e75a27c,
+      type: 3}
+  - GrassObject: {fileID: 6960653670946640451, guid: 32642a4a068853c4e99b01dbe2acc1e5,
+      type: 3}
+  - Wall: {fileID: 3632918368366729937, guid: 91f92510342063144b556b0d31a841cc, type: 3}
+  - TableLike: {instanceID: 0}
+  - GroundWorldTile: {fileID: 8587002967902325720, guid: 562051b08f7799f4c923059edab06c44,
+      type: 3}
+  - DiagonalWorldTile: {fileID: 6365474777778952796, guid: a1e9421b4df0e5b4ca3547d43786904d,
+      type: 3}
+  - WorldContainer: {instanceID: 0}
+  - CornerCube: {fileID: 100000, guid: 69b3b764d6f2d0647bad2661258f4f4e, type: 3}
+  - navMeshBuilder: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
