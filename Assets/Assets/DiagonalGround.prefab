@@ -19,7 +19,7 @@ GameObject:
   m_TagString: Diagonal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &3606657691600230379
 Transform:
@@ -92,6 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 304be4b095cc5534bb4819868dd659f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  landscapeType: 0
   Orientation: 
   x: 0
   y: 0

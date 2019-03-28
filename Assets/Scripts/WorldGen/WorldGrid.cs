@@ -17,7 +17,7 @@ namespace WorldGen
         public int factor;
         public Slider slider;
         public bool grass = false;
-
+        private float heightOffset = 0.5f;
         //public BuildTile BuildTile;
         public WorldTile Floor;
         public WorldTile worldTile;
@@ -90,8 +90,9 @@ namespace WorldGen
         /// <summary/>
         private void finishGeneration()
         {
-            if(grass) {
-            StartCoroutine(addGrass());
+            if (grass)
+            {
+                StartCoroutine(addGrass());
 
             }
             StaticBatchingUtility.Combine(WorldContainer);
@@ -180,54 +181,55 @@ namespace WorldGen
         {
             slider.maxValue = levels;
             slider.value = 0;
-            for (int k = 0; k < levels - 1; k++)
-
+            for (int z = 0; z < levels - 1; z++)
             {
-                for (int j = 1; j < height - 1; j++)
+                //depth
+                for (int y = 1; y < height - 1; y++)
                 {
-                    for (int i = 1; i < width - 1; i++)
+                    // width 
+                    for (int x = 1; x < width - 1; x++)
 
                     {
-                        WorldTile tile = worldTiles[i, j, k];
+                        WorldTile tile = worldTiles[x, y, z];
                         if (tile != null)
                         {
-                            if (worldTiles[i + 1, j, k] != null && worldTiles[i - 1, j, k] != null && worldTiles[i, j + 1, k] != null && worldTiles[i, j - 1, k] != null)
+                            if (worldTiles[x + 1, y, z] != null && worldTiles[x - 1, y, z] != null && worldTiles[x, y + 1, z] != null && worldTiles[x, y - 1, z] != null)
                             {
                                 tile.GetComponent<MeshRenderer>().shadowCastingMode = 0;
                             }
                             else
                             {
                                 //Rechts + Hinten
-                                addFlattening(k, j, i);
+                                addFlattening(x, y, z);
                             }
 
                         }
                     }
                 }
 
-                slider.value = k;
+                slider.value = z;
                 yield return null;
             }
             slider.maxValue = levels;
             slider.value = 0;
-            for (int k = 0; k < levels - 1; k++)
-                
+            for (int z = 0; z < levels - 1; z++)
+
             {
-                for (int j = 1; j < height - 1; j++)
+                for (int y = 1; y < height - 1; y++)
                 {
-                    for (int i = 1; i < width - 1; i++)
+                    for (int x = 1; x < width - 1; x++)
 
                     {
-                        WorldTile tile = worldTiles[i, j, k];
+                        WorldTile tile = worldTiles[x, y, z];
                         if (tile == null)
                         {
-                            addDiagonalCorners(k, j, i);
+                            addDiagonalCorners(x, y, z);
 
                         }
                     }
                 }
 
-                slider.value = k;
+                slider.value = z;
                 yield return null;
             }
             print("Flattening done");
@@ -237,133 +239,168 @@ namespace WorldGen
         /// <summary>
         /// Adds CornerStones to further smoothen edges. It determines if there already are Diagonal tiles nearby and adds a corner Stone if thats the case.
         /// <summary/>
-        private void addDiagonalCorners(int k, int j, int i)
+        private void addDiagonalCorners(int x, int y, int z)
         {
-            //Rechts & Hinten
-            if (worldTiles[i + 1, j, k] != null && worldTiles[i + 1, j, k].tag == "Diagonal" && worldTiles[i, j + 1, k] != null && worldTiles[i, j + 1, k].tag == "Diagonal")
+            WorldTile tile = null;
+            const float startRotation = 180.0f;
+            if (z + 1 < levels) // && worldTiles[x, y, z] != null && worldTiles[x, y, z].gameObject.tag != "Diagonal" && worldTiles[x, y, z].gameObject.tag != "DiagonalCorner")
             {
-                addToTiles(DiagonalCornerTile, i, j, k + 1 - levels / 2, Vector3.zero, Quaternion.Euler(-90, 180, 0), "DiagonalCorner i+1 j+1");
-
-            }
-            else
-                //Rechts und Vorne
-                if (worldTiles[i + 1, j, k] != null && worldTiles[i + 1, j, k].tag == "Diagonal" && worldTiles[i, j - 1, k] != null && worldTiles[i, j - 1, k].tag == "Diagonal")
-            {
-                addToTiles(DiagonalCornerTile, i, j, k + 1 - levels / 2, Vector3.zero, Quaternion.Euler(-90, 270, 0), "DiagonalCorner i+1 j-1");
-
-            }
-            else
-                //Links und Vorne
-                if (worldTiles[i - 1, j, k] != null && worldTiles[i - 1, j, k].tag == "Diagonal" && worldTiles[i, j - 1, k] != null && worldTiles[i, j - 1, k].tag == "Diagonal")
-            {
-                addToTiles(DiagonalCornerTile, i, j, k + 1 - levels / 2, Vector3.zero, Quaternion.Euler(-90, 0, 0), "DiagonalCorner i-1 j-1");
-
-            }
-            else
 
 
-            //Links und Hinten
-            if (worldTiles[i - 1, j, k] != null && worldTiles[i - 1, j, k].tag == "Diagonal" && worldTiles[i, j + 1, k] != null && worldTiles[i, j + 1, k].tag == "Diagonal")
-            {
-                addToTiles(DiagonalCornerTile, i, j, k + 1 - levels / 2, Vector3.zero, Quaternion.Euler(-90, 90, 0), "DiagonalCorner i-1 j+1");
+                //Rechts & Hinten
+                if (worldTiles[x + 1, y, z + 1] != null && worldTiles[x, y + 1, z + 1] != null && (worldTiles[x + 1, y, z + 1].tag == "Diagonal" || worldTiles[x, y + 1, z + 1].tag == "Diagonal"))
+                {
+                    tile = addToTiles(DiagonalCornerTile, x, y, z + 1, Vector3.zero, Quaternion.Euler(-90, startRotation, 0), "DiagonalCorner i+1 j+1");
 
+                }
+                else
+                    //Rechts und Vorne
+                    if (worldTiles[x + 1, y, z + 1] != null && worldTiles[x + 1, y, z + 1].tag == "Diagonal" && worldTiles[x, y - 1, z + 1] != null && worldTiles[x, y - 1, z + 1].tag == "Diagonal")
+                {
+                    tile = addToTiles(DiagonalCornerTile, x, y, z + 1, Vector3.zero, Quaternion.Euler(-90, startRotation + 90 % 360, 0), "DiagonalCorner i+1 j-1");
+
+                }
+                else
+                    //Links und Vorne
+                    if (worldTiles[x - 1, y, z + 1] != null && worldTiles[x - 1, y, z + 1].tag == "Diagonal" && worldTiles[x, y - 1, z + 1] != null && worldTiles[x, y - 1, z + 1].tag == "Diagonal")
+                {
+                    tile = addToTiles(DiagonalCornerTile, x, y, z + 1, Vector3.zero, Quaternion.Euler(-90, startRotation + 180 % 360, 0), "DiagonalCorner i-1 j-1");
+
+                }
+                else
+                //Links und Hinten
+                if (worldTiles[x - 1, y, z + 1] != null && worldTiles[x - 1, y, z + 1].tag == "Diagonal" && worldTiles[x, y + 1, z + 1] != null && worldTiles[x, y + 1, z + 1].tag == "Diagonal")
+                {
+                    tile = addToTiles(DiagonalCornerTile, x, y, z + 1, Vector3.zero, Quaternion.Euler(-90, startRotation + 270 % 360, 0), "DiagonalCorner i-1 j+1");
+                }
+                tile?.setCoords(x, y, z + 1);
             }
         }
         /// <summary>
         /// Adds smoothening DiagonalTiles to make the Landscape better. 
         /// <summary/>
-        /// <param name="z"> The y coordinate <param/>
-        /// <param name="y"> The z coordinate <param/>
         /// <param name="x"> The x coordinate <param/>
-        private void addFlattening(int z, int y, int x)
+        /// <param name="y"> The y coordinate <param/>
+        /// <param name="z"> The z coordinate <param/>
+        private void addFlattening(int x, int y, int z)
         {
-            
-            if(!checkDoubleSided(z, y, x))
+            WorldTile tile = null;
+            if (x - 1 <= 0 || x + 1 >= width || y - 1 <= 0 || y + 1 >= height || z - 1 < 0 || z + 1 >= levels)
             {
-
-                //Ist Rechts einer höher
-                if (worldTiles[x + 1, y, z + 1] != null && worldTiles[x - 1, y, z] != null && worldTiles[x + 1, y, z + 1].gameObject.tag != "Diagonal")
+                return;
+            }
+            else
+            {
+                tile = addDiagonalGround(x, y, z, tile);
+                if (tile == null)
                 {
-                    //GameObject.Destroy(tile.GetComponent<WorldTile>());
-                    //GameObject.DestroyImmediate(tile);
-                    //GameObject.Destroy(tile.gameObject);
-                    addToTiles(DiagonalWorldTile, x, y, z + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 270, 0), "Orientation i+1");
-                }
-                else
-                {
-                    //Check ob hinten höher
-                    if (worldTiles[x, y - 1, z + 1] != null && worldTiles[x, y + 1, z] != null && worldTiles[x, y - 1, z + 1].gameObject.tag != "Diagonal")
-                    {
-                        //GameObject.Destroy(tile.GetComponent<WorldTile>());
-                        //GameObject.DestroyImmediate(tile);
-                        //GameObject.Destroy(tile.gameObject);
-                        addToTiles(DiagonalWorldTile, x, y, z + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 0, 0), "Orientation j-1");
-                    }
-                    else
-                    {
-                        //Ist links höher
-                        if (worldTiles[x - 1, y, z + 1] != null && worldTiles[x + 1, y, z] != null && worldTiles[x - 1, y, z + 1].gameObject.tag != "Diagonal")
-                        {
-                            //RICHTIG
-                            //GameObject.Destroy(tile.GetComponent<WorldTile>());
-                            //GameObject.DestroyImmediate(tile);
-                            //GameObject.Destroy(tile.gameObject);
-                            addToTiles(DiagonalWorldTile, x, y, z + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 90, 0), "Orientation i-1");
-                        }
-                        else
-                        {
-                            //Ist vorne höher
-                            if (worldTiles[x, y + 1, z + 1] != null && worldTiles[x, y - 1, z] != null && worldTiles[x, y + 1, z + 1].gameObject.tag != "Diagonal")
-                            {
-                                //GameObject.Destroy(tile.GetComponent<WorldTile>());
-                                //GameObject.DestroyImmediate(tile);
-                                //GameObject.Destroy(tile.gameObject);
-                                addToTiles(DiagonalWorldTile, x, y, z + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 180, 0), "Orientation j+1");
-                            }
-                        }
-                    }
+                    addCornerCubeDoubleSided(x, y, z);
                 }
             }
+            tile?.setCoords(x, y, z + 2);
 
         }
+        /// <summary>
+        /// Man gibt die Koordinaten eines WorldTiles an um herauszufinden, ob es sich auf einer Steigung befindet. 
+        /// Wenn es das tut, wird eine Rotation zurück gegeben, mit der man berechnen kann in welche Richtung die Steigung ist.
+        /// Gibt die nötige Rotation zurück um an eine Diagonale einzufügen.
+        /// </summary>
+        /// <param name="x"> Die X Koordinate des WorldTiles</param>
+        /// <param name="y">Die Y Koordinate des WorldTiles</param>
+        /// <param name="z">Die Z Koordinate des WorldTiles</param>
+        /// <returns> Ein Int zwischen 0 und 3 zum Multiplizieren mit 90Grad. Wenn -1 zurückgegeben wird gab es einen Fehler. </returns>
+        private int DifferentiateWorldTiles(int x,int y, int z)
+        {
+            if (worldTiles[x + 1, y, z + 1] != null && worldTiles[x, y, z] != null && worldTiles[x + 1, y, z + 1].gameObject.tag != "Diagonal")
+            {
+                return 3;
+            } else if(worldTiles[x, y+1, z + 1] != null && worldTiles[x, y, z] != null && worldTiles[x, y+1, z + 1].gameObject.tag != "Diagonal")
+            {
+                return 2;
+            } else if(worldTiles[x - 1, y, z + 1] != null && worldTiles[x, y, z] != null && worldTiles[x - 1, y, z + 1].gameObject.tag != "Diagonal")
+            {
+                return 1;
+            } else if(worldTiles[x, y-1, z + 1] != null && worldTiles[x, y, z] != null && worldTiles[x, y-1, z + 1].gameObject.tag != "Diagonal")
+            {
+                return 0;
+            }
+            return -1;
+
+        }
+
+        private WorldTile addDiagonalGround(int x, int y, int z, WorldTile tile)
+        {
+            if(z+1 < levels)
+            {
+                float rotator = DifferentiateWorldTiles(x, y, z + 1);
+                if (rotator > -1)
+                {
+                    tile = addToTiles(DiagonalWorldTile, x, y, z + 2, Vector3.zero, Quaternion.Euler(0, rotator * 90.0f, 0), rotator + "");
+
+                }
+            }
+            
+
+            /**
+            if (worldTiles[x + 1, y, z + 1] != null && worldTiles[x - 1, y, z] != null && worldTiles[x + 1, y, z + 1].gameObject.tag != "Diagonal" && worldTiles[x - 1, y, z].gameObject.tag != "Diagonal")
+            {
+                tile = addToTiles(DiagonalWorldTile, x, y, z + 2, Vector3.zero, Quaternion.Euler(0, 270.0f, 0), "Orientation x+1,x-1");
+            }
+            else
+            if (worldTiles[x, y - 1, z + 1] != null && worldTiles[x, y + 1, z] != null && worldTiles[x, y - 1, z + 1].gameObject.tag != "Diagonal" && worldTiles[x, y + 1, z].gameObject.tag != "Diagonal")
+            {
+                tile = addToTiles(DiagonalWorldTile, x, y, z + 2, Vector3.zero, Quaternion.Euler(0, startRotation + 90 % 360, 0), "Orientation y-1,y+1");
+            }
+            else
+            if (worldTiles[x - 1, y, z + 1] != null && worldTiles[x + 1, y, z] != null && worldTiles[x - 1, y, z + 1].gameObject.tag != "Diagonal" && worldTiles[x + 1, y, z].gameObject.tag != "Diagonal")
+            {
+                tile = addToTiles(DiagonalWorldTile, x, y, z + 2, Vector3.zero, Quaternion.Euler(0, startRotation + 180 % 360, 0), "Orientation x-1,x+1");
+            }
+            else
+            if (worldTiles[x, y + 1, z + 1] != null && worldTiles[x, y - 1, z] != null && worldTiles[x, y + 1, z + 1].gameObject.tag != "Diagonal" && worldTiles[x, y - 1, z].gameObject.tag != "Diagonal")
+            {
+                tile = addToTiles(DiagonalWorldTile, x, y, z + 2, Vector3.zero, Quaternion.Euler(0, startRotation + 270 % 360, 0), "Orientation y+1,y-1");
+            }
+            */
+            return tile;
+        }
+
         public void clearChildren()
         {
-            foreach(Transform t in WorldContainer.transform)
+            foreach (Transform t in WorldContainer.transform)
             {
                 GameObject.Destroy(t.gameObject);
             }
         }
-        private bool checkDoubleSided(int k, int j, int i)
+        private bool addCornerCubeDoubleSided(int x, int y, int z)
         {
-            if (k <= 0 || k >= width || j <= 0 || j>= height || i <= -levels/2 || i >= levels/2)
-            {
-                return false;
-            }
+            const float startRotation = 270.0f;
             bool used = false;
-            if (worldTiles[i + 1, j, k + 1] != null && worldTiles[i + 1, j, k + 1].gameObject.tag != "Diagonal" && worldTiles[i, j - 1, k + 1] != null && worldTiles[i, j - 1, k + 1].gameObject.tag != "Diagonal")
+            z++;
+            if (worldTiles[x + 1, y, z] != null && !(worldTiles[x + 1, y, z].gameObject.tag == "Diagonal" || worldTiles[x + 1, y, z].gameObject.tag == "DiagonalCorner") && worldTiles[x, y - 1, z] != null && !(worldTiles[x, y - 1, z].gameObject.tag == "Diagonal" || worldTiles[x, y - 1, z].gameObject.tag == "DiagonalCorner"))
             {
-                addToTiles(CornerCube, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 270, 0), "Orientation i+1");
+                addToTiles(CornerCube, x, y, z + 1, Vector3.zero, Quaternion.Euler(0, startRotation, 0), "Orientation x+1,y-1");
                 used = true;
             }
             //Hinten + Links
             else
-            if (worldTiles[i, j - 1, k + 1] != null && worldTiles[i, j - 1, k + 1].gameObject.tag != "Diagonal" && worldTiles[i - 1, j, k + 1] != null && worldTiles[i - 1, j, k + 1].gameObject.tag != "Diagonal")
+            if (worldTiles[x, y - 1, z] != null && !(worldTiles[x, y - 1, z].gameObject.tag == "Diagonal" || worldTiles[x, y - 1, z].gameObject.tag == "DiagonalCorner") && worldTiles[x - 1, y, z] != null && !(worldTiles[x - 1, y, z].gameObject.tag == "Diagonal" || worldTiles[x - 1, y, z].gameObject.tag == "DiagonalCorner"))
             {
-                addToTiles(CornerCube, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 0, 0), "Orientation i+1");
+                addToTiles(CornerCube, x, y, z + 1, Vector3.zero, Quaternion.Euler(0, startRotation + 90 % 360, 0), "Orientation y-1, x-1");
                 used = true;
             }
             //Links + Vorne
             else
-            if (worldTiles[i - 1, j, k + 1] != null && worldTiles[i - 1, j, k + 1].gameObject.tag != "Diagonal" && worldTiles[i, j + 1, k + 1] != null && worldTiles[i, j + 1, k + 1].gameObject.tag != "Diagonal")
+            if (worldTiles[x - 1, y, z] != null && !(worldTiles[x - 1, y, z].gameObject.tag == "Diagonal" || worldTiles[x - 1, y, z].gameObject.tag == "DiagonalCorner") && worldTiles[x, y + 1, z] != null && !(worldTiles[x, y + 1, z].gameObject.tag != "Diagonal" || worldTiles[x, y + 1, z].gameObject.tag == "DiagonalCorner"))
             {
-                addToTiles(CornerCube, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 90, 0), "Orientation i+1");
+                addToTiles(CornerCube, x, y, z + 1, Vector3.zero, Quaternion.Euler(0, startRotation + 180 % 360, 0), "Orientation y+1, x-1");
                 used = true;
             }
             // Vorne + Rechts
             else
-            if (worldTiles[i, j + 1, k + 1] != null && worldTiles[i, j + 1, k + 1].gameObject.tag != "Diagonal" && worldTiles[i + 1, j, k + 1] != null && worldTiles[i + 1, j, k + 1].gameObject.tag != "Diagonal")
+            if (worldTiles[x, y + 1, z] != null && !(worldTiles[x, y + 1, z].gameObject.tag == "Diagonal" || worldTiles[x, y + 1, z].gameObject.tag == "DiagonalCorner") && worldTiles[x + 1, y, z] != null && !(worldTiles[x + 1, y, z].gameObject.tag == "Diagonal" || worldTiles[x + 1, y, z].gameObject.tag == "DiagonalCorner"))
             {
-                addToTiles(CornerCube, i, j, k + 2 - levels / 2, Vector3.zero, Quaternion.Euler(0, 180, 0), "Orientation i+1");
+                addToTiles(CornerCube, x, y, z + 1, Vector3.zero, Quaternion.Euler(0, startRotation + 270 % 360, 0), "Orientation y+1,x+1");
                 used = true;
             }
             return used;
@@ -383,7 +420,7 @@ NUR TEST METHODEN
         }
         private int roundAndFlatHeight(float value)
         {
-            float mappedValue = value * levels - levels / 2;
+            float mappedValue = value * levels;
             float roundedValue = Mathf.Round(mappedValue);
             return (int)roundedValue;
 
@@ -409,12 +446,18 @@ NUR TEST METHODEN
                     int z = roundAndFlatHeight(sample);
                     if (z == levels) z = levels - 1;
                     //print("x:" + x + " y: " + y + "," + z);
-                    if (x < width && y < height && z + levels / 2 < levels)
+                    if (x < width && y < height && z < levels)
                     {
-                        var tile = addToTiles(WaterTile, x, y, z, translation, rotation);
+                        var tile = addToTiles(GroundWorldTile, x, y, z, translation, rotation);
+                        //tile?.GetComponent<WorldTile>().setCoords(x, y, z);
+                        if (z > 0)
+                        {
+                            var groundTile = addToTiles(GroundWorldTile, x, y, z - 1, translation, rotation);
+                            //groundTile?.GetComponent<WorldTile>().setCoords(x, y, z-1);
+                        }
                         // if (z < -levels / 2 + 2)
                         // {
-                            
+
                         //     tile.landscapeType = LandscapeType.Water;
                         //     tile.GetComponent<MeshRenderer>().material = MaterialProvider.GetWorldTileMaterialByType(tile.GetComponent<WorldTile>().landscapeType);
 
@@ -442,12 +485,21 @@ NUR TEST METHODEN
         }
         public WorldTile addToTiles(WorldTile tileObject, int x, int y, int z, Vector3 translate, Quaternion rotate)
         {
-            if(z < -levels /2 + 2) {
+            if (y >= 0 && y < levels && worldTiles[x, y, z] != null)
+            {
+                return null;
+            }
+            if (z < 0.3f * levels)
+            {
                 tileObject.landscapeType = LandscapeType.Water;
-            } else if(z < 0.7f * levels - levels/2) {
+            }
+            else if (z < 0.7f * levels)
+            {
                 tileObject.landscapeType = LandscapeType.Earth;
-            } else  {
-               tileObject.landscapeType = LandscapeType.Stone;
+            }
+            else
+            {
+                tileObject.landscapeType = LandscapeType.Stone;
 
             }
             Vector3 position = new Vector3(x, z, y);
@@ -457,13 +509,13 @@ NUR TEST METHODEN
             try
             {
                 WorldTile tile = objectToBeAdded.GetComponent<WorldTile>();
-                worldTiles[x, y, z + (levels / 2) - 1] = tile;
-                tile.setCoords(x, y, z + (levels / 2) - 1);
-
+                worldTiles[x, y, z] = tile;
+                tile.setCoords(x, y, z);
             }
             catch (Exception e)
             {
-                if(e is NullReferenceException) {
+                if (e is NullReferenceException)
+                {
                     print(e);
                 }
                 print("Exception at:" + x + ", " + y + ", " + z);
@@ -473,25 +525,36 @@ NUR TEST METHODEN
             objectToBeAdded.transform.SetParent(WorldContainer.transform);
             return objectToBeAdded.GetComponent<WorldTile>();
         }
-        public void addToTiles(WorldTile tileObject, int x, int y, int z, Vector3 translate, Quaternion rotate, string orientation)
+        public WorldTile addToTiles(WorldTile tileObject, int x, int y, int z, Vector3 translate, Quaternion rotate, string orientation)
         {
-            if(z < -levels /2 + 2) {
+            if (z >= 0 && z < levels && worldTiles[x, y, z] != null)
+            {
+                return null;
+            }
+            if (z < 0.3f * levels)
+            {
                 tileObject.landscapeType = LandscapeType.Water;
-            } else if(z < 0.7f * levels - levels/2) {
+            }
+            else if (z < 0.7f * levels)
+            {
                 tileObject.landscapeType = LandscapeType.Earth;
-            } else  {
-               tileObject.landscapeType = LandscapeType.Stone;
+            }
+            else
+            {
+                tileObject.landscapeType = LandscapeType.Stone;
 
             }
             Vector3 position = new Vector3(x, z, y);
             Quaternion rotation = rotate;
-            GameObject objectToBeAdded = (Instantiate(tileObject.gameObject, position + translate, rotate));
+            GameObject objectToBeAdded = (Instantiate(tileObject.gameObject, position, rotate));
             objectToBeAdded.name = tileObject.name + "WorldTile at " + x + "," + y + "," + z;
             try
             {
                 WorldTile tile = objectToBeAdded.GetComponent<WorldTile>();
-                worldTiles[x, y, z + (levels / 2) - 1] = tile;
+                worldTiles[x, y, z] = tile;
                 tile.Orientation = orientation;
+                tile.setCoords(x, y, z);
+
 
             }
             catch (IndexOutOfRangeException e)
@@ -501,6 +564,7 @@ NUR TEST METHODEN
             objectToBeAdded.GetComponent<Renderer>().material = MaterialProvider.GetWorldTileMaterialByType(tileObject.landscapeType);
 
             objectToBeAdded.transform.SetParent(WorldContainer.transform);
+            return objectToBeAdded.GetComponent<WorldTile>();
         }
         public void addToTiles(int x, int y, int z)
         {
