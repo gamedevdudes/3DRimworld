@@ -4809,6 +4809,11 @@ PrefabInstance:
       propertyPath: levels
       value: 40
       objectReference: {fileID: 0}
+    - target: {fileID: 318290209167340408, guid: 2ce6ee723fb7fc44a86f0178a7825f7b,
+        type: 3}
+      propertyPath: planeMesh
+      value: 
+      objectReference: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
     - target: {fileID: 7977463386683653874, guid: 2ce6ee723fb7fc44a86f0178a7825f7b,
         type: 3}
       propertyPath: WorldContainer

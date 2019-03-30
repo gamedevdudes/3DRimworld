@@ -10,6 +10,7 @@ namespace WorldGen
 {
     public class WorldGrid : MonoBehaviour
     {
+        public float WaterLevel = 0.3f;
         public BuildTile[,,] tiles;
 
         private WorldTile[,,] worldTiles;
@@ -28,6 +29,7 @@ namespace WorldGen
         public WorldTile GroundWorldTile;
         public WorldTile DiagonalCornerTile;
         public WorldTile DiagonalWorldTile;
+        public Mesh planeMesh;
         public GameObject WorldContainer;
         public WorldTile CornerCube;
         public LocalNavMeshBuilder navMeshBuilder;
@@ -196,6 +198,9 @@ namespace WorldGen
                             if (worldTiles[x + 1, y, z] != null && worldTiles[x - 1, y, z] != null && worldTiles[x, y + 1, z] != null && worldTiles[x, y - 1, z] != null)
                             {
                                 tile.GetComponent<MeshRenderer>().shadowCastingMode = 0;
+                                tile.GetMeshFilter().mesh = planeMesh;
+                                tile.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                                tile.transform.position += new Vector3(0, 0.5f, 0);
                             }
                             else
                             {
@@ -203,6 +208,13 @@ namespace WorldGen
                                 addFlattening(x, y, z);
                             }
 
+                        } else
+                        {
+                            if(z < WaterLevel)
+                            {
+                                var groundTile = addToTiles(GroundWorldTile, x, y, z - 1, Vector3.zero, Quaternion.identity);
+
+                            }
                         }
                     }
                 }
@@ -485,11 +497,11 @@ NUR TEST METHODEN
         }
         public WorldTile addToTiles(WorldTile tileObject, int x, int y, int z, Vector3 translate, Quaternion rotate)
         {
-            if (y >= 0 && y < levels && worldTiles[x, y, z] != null)
+            if (z >= 0 && z < levels && worldTiles[x, y, z] != null)
             {
                 return null;
             }
-            if (z < 0.3f * levels)
+            if (z < WaterLevel * levels)
             {
                 tileObject.landscapeType = LandscapeType.Water;
             }

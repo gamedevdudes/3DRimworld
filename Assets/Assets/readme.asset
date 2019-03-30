@@ -4,14 +4,21 @@
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fcf7219bab7fe46a1ad266029b2fee19, type: 3}
-  m_Name: Readme
+  m_Name: readme
   m_EditorClassIdentifier: 
+  icon: {fileID: 0}
   title: Prefabs und Assets
   sections:
   - heading: Der Asset Ordner
-    text:  'Der Asset Ordnet beinhaltet alle Modelle und Prefabs die für das Spiel benötigt werden. Dabei sind im Mesh Ordner alle Dazugehörigen Meshes zu den Prefabs. '
+    text: "Der Asset Ordnet beinhaltet alle Modelle und Prefabs die f\xFCr das Spiel
+      ben\xF6tigt werden. Dabei sind im Mesh Ordner alle Dazugeh\xF6rigen Meshes zu
+      den Prefabs. "
+    linkText: 
+    url: 
+  loadedLayout: 0
